@@ -28,8 +28,7 @@ export async function POST(req: Request) {
     return Response.json(
       {
         success: true,
-        message: "Questions generated successfully.",
-        messages: response.data.choices[0].message.content,
+        message: response.data.choices[0].message.content,
       },
       { status: 200 }
     );

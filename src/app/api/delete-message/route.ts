@@ -2,14 +2,13 @@ import dbConnect from "@/lib/dbConnect";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import { User } from "next-auth";
-import mongoose from "mongoose";
 import UserModel from "@/model/User";
 
-export async function GET(request: Request) {
+export async function DELETE(request: Request) {
   await dbConnect();
   const session = await getServerSession(authOptions);
   const user = session?.user as User;
-  // console.log("userMsg", user);
+  //   console.log("userMsg", user);
 
   if (!session || !session.user) {
     return Response.json(
@@ -21,43 +20,40 @@ export async function GET(request: Request) {
     );
   }
 
-  const userId = new mongoose.Types.ObjectId(user._id);
-  console.log(userId);
-
+  const { searchParams } = new URL(request.url);
+  const queryParams = {
+    messageId: searchParams.get("messageId"),
+  };
   try {
-    const user = await UserModel.aggregate([
-      { $match: { _id: userId } },
-      { $unwind: "$messages" },
-      { $sort: { "messages.createdAt": -1 } },
-      { $group: { _id: "$_id", messages: { $push: "$messages" } } },
-    ]);
-    console.log("user", user);
+    const deletedMessage = await UserModel.updateOne(
+      {
+        _id: user._id,
+      },
+      {
+        $pull: { messages: { _id: queryParams.messageId } },
+      }
+    );
 
-    if (!user) {
-      return Response.json({
-        success: false,
-        message: "No user found",
-      },{status:404});
-    }
-    if (user.length === 0) {
+    
+    if (deletedMessage.modifiedCount === 0) {
       return Response.json(
         {
           success: false,
-          message: "No messages available",
+          message: "Message not found or already deleted!",
         },
-        { status: 200 }
+        { status: 404 }
       );
     }
 
     return Response.json({
       success: true,
-      messages: user[0].messages,
+      message: "Message deleted!",
     });
   } catch (error) {
     return Response.json(
       {
         success: false,
-        message: "Error fetching messages",
+        message: "Error deleting message",
       },
       { status: 500 }
     );

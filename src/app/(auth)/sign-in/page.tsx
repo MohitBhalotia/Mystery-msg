@@ -19,11 +19,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { signInSchema } from "@/schemas/SignInSchema";
 import { signIn } from "next-auth/react";
+import { Switch } from "@/components/ui/switch";
+
 const SignIn = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
-  // zod implementation
   const form = useForm({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -39,9 +41,7 @@ const SignIn = () => {
       identifier: data.identifier,
       password: data.password,
     });
-    console.log(result);
     if (result?.error) {
-      // console.log(result);
       toast.error(result.error);
       setIsSubmitting(false);
     }
@@ -50,6 +50,7 @@ const SignIn = () => {
       setIsSubmitting(false);
     }
   };
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-800">
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
@@ -59,6 +60,7 @@ const SignIn = () => {
           </h1>
           <p className="mb-4">Sign in to start your anonymous adventure!</p>
         </div>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
@@ -69,9 +71,8 @@ const SignIn = () => {
                   <FormLabel>Email</FormLabel>
                   <Input
                     {...field}
-                    name="email"
-                    type="email"
                     placeholder="Enter your email"
+                    type="email"
                   />
                   <FormMessage />
                 </FormItem>
@@ -83,17 +84,26 @@ const SignIn = () => {
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel className="flex items-center justify-between">
+                    Password
+                    <div className="flex items-center space-x-2">
+                      <span className="text-sm text-gray-600">Show password</span>
+                      <Switch
+                        checked={showPassword}
+                        onCheckedChange={setShowPassword}
+                      />
+                    </div>
+                  </FormLabel>
                   <Input
-                    type="password"
                     {...field}
-                    name="password"
                     placeholder="Enter password"
+                    type={showPassword ? "text" : "password"}
                   />
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <Button type="submit" className="w-full" disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
@@ -101,11 +111,12 @@ const SignIn = () => {
                   Please wait
                 </>
               ) : (
-                "Sign Up"
+                "Sign In"
               )}
             </Button>
           </form>
         </Form>
+
         <div className="text-center mt-4">
           <p>
             Don&apos;t have an account?{" "}

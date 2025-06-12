@@ -9,11 +9,43 @@ import { ApiResponse } from "@/types/ApiResponse";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { AxiosError } from "axios";
 import { Loader2, RefreshCcw } from "lucide-react";
-import { User } from "next-auth";
+// import { User } from "next-auth";
 import { useSession } from "next-auth/react";
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
+const DashboardSkeleton = () => {
+  return (
+    <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl space-y-6">
+      <Skeleton className="h-10 w-1/3" />
+
+      <div>
+        <Skeleton className="h-6 w-1/4 mb-2" />
+        <div className="flex items-center bg-muted pl-2 rounded-2xl">
+          <Skeleton className="h-10 w-full mr-2 rounded-2xl" />
+          <Skeleton className="h-10 w-24 rounded-2xl" />
+        </div>
+      </div>
+
+      <div className="flex items-center space-x-4">
+        <Skeleton className="h-6 w-12" />
+        <Skeleton className="h-6 w-24" />
+      </div>
+
+      <Skeleton className="h-px w-full" />
+
+      <Skeleton className="h-10 w-10 rounded-full" />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-20 w-full rounded-md shadow-sm" />
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const Dashboard = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -24,7 +56,9 @@ const Dashboard = () => {
     setMessages(messages.filter((message) => message._id != messageId));
   };
 
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  // console.log("session",session);
+
   const form = useForm({
     resolver: zodResolver(acceptMessageSchema),
   });
@@ -36,10 +70,9 @@ const Dashboard = () => {
     setIsSwitchLoading(true);
     try {
       const response = await axios.get<ApiResponse>("/api/accept-messages");
-      setValue(
-        "acceptMessages",
-        response?.data?.isAcceptingMessages as boolean
-      );
+      console.log(response);
+
+      setValue("acceptMessages", response?.data?.isAcceptingMessage as boolean);
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
       toast.error(
@@ -50,67 +83,85 @@ const Dashboard = () => {
     }
   }, [setValue]);
 
-  const fetchMessages=useCallback(async(refresh:boolean = false)=>{
-    setIsLoading(true)
-    setIsSwitchLoading(false)
-    try {
-      const response=await axios.get<ApiResponse>(`/api/get-messages`)
-      console.log(response);
-      
-      setMessages(response.data.messages||[])
-      if(refresh){
-        toast.success('Showing latest messages!')
-      }
-    } catch (error) {
-      const axiosError = error as AxiosError<ApiResponse>;
-      toast.error(
-        axiosError.response?.data.message || "Error fetching messages"
-      );
-    }finally{
-      setIsLoading(false);
-    }
-  },[setIsLoading,setMessages])
+  const fetchMessages = useCallback(
+    async (refresh: boolean = false) => {
+      setIsLoading(true);
+      setIsSwitchLoading(false);
+      try {
+        const response = await axios.get<ApiResponse>(`/api/get-messages`);
+        // console.log("fetch msg response",response);
+        // console.log(response);
 
-  useEffect(()=>{
-    if(!session || !session.user) return;
-    fetchMessages()
-    fetchAcceptMessage()
-  },[session,setValue,fetchAcceptMessage,fetchMessages])
+        setMessages(response.data.messages || []);
+        if (refresh) {
+          toast.success("Showing latest messages!");
+        }
+      } catch (error) {
+        const axiosError = error as AxiosError<ApiResponse>;
+        toast.error(
+          axiosError.response?.data.message || "Error fetching messages"
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [setIsLoading, setMessages]
+  );
+
+  useEffect(() => {
+    if (!session || !session.user) return;
+    fetchMessages();
+    fetchAcceptMessage();
+  }, [session, setValue, fetchAcceptMessage, fetchMessages]);
 
   // handle switch change
-  const handleSwitchChange=async()=>{
+  const handleSwitchChange = async () => {
     try {
-      const response=await axios.post<ApiResponse>('/api/accept-messages',{
-        acceptMessages:!acceptMessages
-      })
-      setValue('acceptMessages',!acceptMessages)
-      toast.success(response.data.message)
+      // console.log(acceptMessages);
+
+      const response = await axios.post<ApiResponse>("/api/accept-messages", {
+        acceptMessages: !acceptMessages,
+      });
+      setValue("acceptMessages", !acceptMessages);
+      toast.success(response.data.message);
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
       toast.error(
-        axiosError.response?.data.message || "Error changing accept messages status"
+        axiosError.response?.data.message ||
+          "Error changing accept messages status"
       );
     }
-  }
+  };
 
-  if(!session || !session.user){
-    return <div>Please Login</div>
+  if (status === "loading" || isLoading) {
+    return <DashboardSkeleton />;
   }
-
-  const {username}=session.user as User
-
-  const baseUrl=process.env.NEXT_PUBLIC_APP_URL||""
-  const profileUrl=`${baseUrl}/u/${username}`
-  const copyToClipboard=()=>{
-    navigator.clipboard.writeText(profileUrl)
-    toast.success('Copied to clipboard!')
+  if (!session || !session.user) {
+    return (
+      <div className="bg-white  shadow-md rounded-md p-8 text-center">
+        <p className="text-lg font-semibold mb-4">
+          Please login to view your dashboard
+        </p>
+        <Button asChild>
+          <Link href="/sign-in">Login</Link>
+        </Button>
+      </div>
+    );
   }
+  const { username } = session.user;
+
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "";
+  const profileUrl = `${baseUrl}/u/${username}`;
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(profileUrl);
+    toast.success("Copied to clipboard!");
+  };
   return (
     <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl">
       <h1 className="text-4xl font-bold mb-4">User Dashboard</h1>
 
       <div className="mb-4">
-        <h2 className="text-lg font-semibold mb-2">Copy Your Unique Link</h2>{' '}
+        <h2 className="text-lg font-semibold mb-2">Copy Your Unique Link</h2>{" "}
         <div className="flex items-center bg-gray-100 pl-2 rounded-2xl">
           <input
             type="text"
@@ -118,19 +169,24 @@ const Dashboard = () => {
             disabled
             className="input input-bordered w-full p-2 mr-2"
           />
-          <Button className="rounded-2xl hover:bg-gray-700" onClick={copyToClipboard}>Copy</Button>
+          <Button
+            className="rounded-2xl hover:bg-gray-700"
+            onClick={copyToClipboard}
+          >
+            Copy
+          </Button>
         </div>
       </div>
 
       <div className="mb-4">
         <Switch
-          {...register('acceptMessages')}
+          {...register("acceptMessages")}
           checked={acceptMessages}
           onCheckedChange={handleSwitchChange}
           disabled={isSwitchLoading}
         />
         <span className="ml-2">
-          Accept Messages: {acceptMessages ? 'On' : 'Off'}
+          Accept Messages: {acceptMessages ? "On" : "Off"}
         </span>
       </div>
       <Separator />

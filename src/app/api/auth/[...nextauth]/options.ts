@@ -27,16 +27,13 @@ export const authOptions: NextAuthOptions = {
         },
       },
       async authorize(credentials, req): Promise<any> {
-        console.log(credentials);
+        // console.log(credentials);
 
         await dbConnect();
         try {
-          const user = await UserModel.findOne(
-            // $or: [
-            { email: credentials?.identifier }
-            // {username:credentials?.username}
-            // ],
-          );
+          const user = await UserModel.findOne({
+            email: credentials?.identifier,
+          });
           if (!user) {
             throw new Error("No user found with this email");
           }
@@ -50,7 +47,8 @@ export const authOptions: NextAuthOptions = {
           );
           if (isPasswordCorrect) {
             // console.log('Done');
-            
+            console.log(user);
+
             return user;
           } else {
             throw new Error("Invalid credentials. Please try again.");
@@ -70,17 +68,21 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async jwt({ token, user }) {
-      token._id = user?._id?.toString();
-      token.isVerified = user?.isVerified;
-      token.isAcceptingMessages = user?.isAcceptingMessages;
-      token.username = user?.username;
+      if (user) {
+        token._id = user?._id?.toString();
+        token.isVerified = user?.isVerified;
+        token.isAcceptingMessages = user?.isAcceptingMessage;
+        token.username = user?.username;
+        token.email=token.email
+      }
       return token;
     },
     async session({ session, token }) {
       if (token) {
         session.user._id = token._id;
         session.user.isVerified = token.isVerified;
-        session.user.isAcceptingMessages = token.isAcceptingMessages;
+        session.user.isAcceptingMessage = token.isAcceptingMessages;
+        session.user.email = token.email;
         session.user.username = token.username;
       }
       return session;
