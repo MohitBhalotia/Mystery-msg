@@ -1,47 +1,107 @@
 "use client";
-import MessageCard from "@/components/MessageCard";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
-import { Message } from "@/model/User";
+
+import { useCallback, useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { useForm } from "react-hook-form";
 import { acceptMessageSchema } from "@/schemas/acceptMessageSchema";
 import { ApiResponse } from "@/types/ApiResponse";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { AxiosError } from "axios";
-import { Loader2, RefreshCcw } from "lucide-react";
-// import { User } from "next-auth";
-import { useSession } from "next-auth/react";
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { motion, AnimatePresence } from "framer-motion";
+import { Loader2, RefreshCw, Mail, MailOpen, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
+
+// UI Components
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
-import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import MessageCard from "@/components/MessageCard";
+import { Message } from "@/model/User";
+
+// Using UIMessage type imported from MessageCard component
+
 const DashboardSkeleton = () => {
   return (
-    <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl space-y-6">
-      <Skeleton className="h-10 w-1/3" />
-
-      <div>
-        <Skeleton className="h-6 w-1/4 mb-2" />
-        <div className="flex items-center bg-muted pl-2 rounded-2xl">
-          <Skeleton className="h-10 w-full mr-2 rounded-2xl" />
-          <Skeleton className="h-10 w-24 rounded-2xl" />
+    <div className="container mx-auto px-4 py-8 max-w-6xl">
+      <div className="space-y-8">
+        {/* Header Skeleton */}
+        <div className="space-y-4">
+          <Skeleton className="h-9 w-64" />
+          <Skeleton className="h-5 w-80" />
         </div>
-      </div>
 
-      <div className="flex items-center space-x-4">
-        <Skeleton className="h-6 w-12" />
-        <Skeleton className="h-6 w-24" />
-      </div>
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Profile Card Skeleton */}
+          <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+            <CardHeader>
+              <Skeleton className="h-7 w-48 mb-2" />
+              <Skeleton className="h-4 w-64" />
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-32" />
+                <div className="flex items-center space-x-2">
+                  <Skeleton className="h-10 flex-1" />
+                  <Skeleton className="h-10 w-10" />
+                </div>
+              </div>
+              <div className="flex items-center justify-between pt-2">
+                <div className="flex items-center space-x-2">
+                  <Skeleton className="h-5 w-5 rounded-full" />
+                  <Skeleton className="h-5 w-24" />
+                </div>
+                <Skeleton className="h-9 w-20" />
+              </div>
+            </CardContent>
+          </Card>
 
-      <Skeleton className="h-px w-full" />
+          {/* Stats Card Skeleton */}
+          <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+            <CardHeader>
+              <Skeleton className="h-7 w-48 mb-2" />
+              <Skeleton className="h-4 w-64" />
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="space-y-2">
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-7 w-16" />
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-      <Skeleton className="h-10 w-10 rounded-full" />
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-20 w-full rounded-md shadow-sm" />
-        ))}
+        {/* Messages Section Skeleton */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-7 w-48" />
+            <Skeleton className="h-9 w-24" />
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {[1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-40 rounded-lg" />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -49,15 +109,15 @@ const DashboardSkeleton = () => {
 
 const Dashboard = () => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
-
-  const handleDeleteMessage = (messageId: string) => {
-    setMessages(messages.filter((message) => message._id != messageId));
-  };
+  const [isCopying, setIsCopying] = useState(false);
+  const [hasCopied, setHasCopied] = useState(false);
 
   const { data: session, status } = useSession();
-  // console.log("session",session);
+  const username = session?.user?.username;
+  const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+  const profileUrl = `${baseUrl}/u/${username}`;
 
   const form = useForm({
     resolver: zodResolver(acceptMessageSchema),
@@ -66,13 +126,41 @@ const Dashboard = () => {
   const { register, watch, setValue } = form;
   const acceptMessages = watch("acceptMessages");
 
+  const handleDeleteMessage = (messageId: string) => {
+    setMessages((prevMessages) =>
+      prevMessages.filter((message: Message) => message._id !== messageId)
+    );
+  };
+
+  const copyToClipboard = async () => {
+    if (!profileUrl) return;
+
+    try {
+      setIsCopying(true);
+      await navigator.clipboard.writeText(profileUrl);
+      setHasCopied(true);
+      toast.success("Link copied to clipboard!");
+
+      setTimeout(() => {
+        setHasCopied(false);
+      }, 2000);
+    } catch (error) {
+      toast.error("Failed to copy link");
+    } finally {
+      setIsCopying(false);
+    }
+  };
+
   const fetchAcceptMessage = useCallback(async () => {
     setIsSwitchLoading(true);
     try {
       const response = await axios.get<ApiResponse>("/api/accept-messages");
       console.log(response);
 
-      setValue("acceptMessages", response?.data?.isAcceptingMessage as boolean);
+      setValue(
+        "acceptMessages",
+        response?.data?.isAcceptingMessages as boolean
+      );
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
       toast.error(
@@ -85,139 +173,286 @@ const Dashboard = () => {
 
   const fetchMessages = useCallback(
     async (refresh: boolean = false) => {
+      if (!username) return;
+
       setIsLoading(true);
-      setIsSwitchLoading(false);
       try {
-        const response = await axios.get<ApiResponse>(`/api/get-messages`);
-        // console.log("fetch msg response",response);
-        // console.log(response);
+        const response = await axios.get<ApiResponse>("/api/get-messages");
+
+        // Transform the API response to match our UIMessage type
 
         setMessages(response.data.messages || []);
+
         if (refresh) {
-          toast.success("Showing latest messages!");
+          toast.success("Messages refreshed!");
         }
       } catch (error) {
-        const axiosError = error as AxiosError<ApiResponse>;
+        const axiosError = error as AxiosError<{ message?: string }>;
         toast.error(
-          axiosError.response?.data.message || "Error fetching messages"
+          axiosError.response?.data?.message || "Failed to fetch messages"
         );
       } finally {
         setIsLoading(false);
       }
     },
-    [setIsLoading, setMessages]
+    [username]
   );
 
-  useEffect(() => {
-    if (!session || !session.user) return;
-    fetchMessages();
-    fetchAcceptMessage();
-  }, [session, setValue, fetchAcceptMessage, fetchMessages]);
-
-  // handle switch change
   const handleSwitchChange = async () => {
     try {
-      // console.log(acceptMessages);
+      //TODO Optimistic update
 
       const response = await axios.post<ApiResponse>("/api/accept-messages", {
         acceptMessages: !acceptMessages,
       });
       setValue("acceptMessages", !acceptMessages);
+      console.log("change", response);
+
+      // Ensure the response value is a boolean
+
       toast.success(response.data.message);
     } catch (error) {
-      const axiosError = error as AxiosError<ApiResponse>;
+      // Revert on error
+
+      const axiosError = error as AxiosError<{ message?: string }>;
       toast.error(
-        axiosError.response?.data.message ||
-          "Error changing accept messages status"
+        axiosError.response?.data?.message ||
+          "Failed to update message settings"
       );
     }
   };
 
-  if (status === "loading" || isLoading) {
+  useEffect(() => {
+    if (status === "authenticated") {
+      fetchMessages();
+      fetchAcceptMessage();
+    }
+  }, [status, fetchMessages, fetchAcceptMessage]);
+
+  if (status === "loading" || !session) {
     return <DashboardSkeleton />;
   }
-  if (!session || !session.user) {
-    return (
-      <div className="bg-white  shadow-md rounded-md p-8 text-center">
-        <p className="text-lg font-semibold mb-4">
-          Please login to view your dashboard
-        </p>
-        <Button asChild>
-          <Link href="/sign-in">Login</Link>
-        </Button>
-      </div>
-    );
-  }
-  const { username } = session.user;
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "";
-  const profileUrl = `${baseUrl}/u/${username}`;
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(profileUrl);
-    toast.success("Copied to clipboard!");
-  };
+  const stats = [
+    { label: "Total Messages", value: messages.length, icon: Mail },
+  ];
+
   return (
-    <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl">
-      <h1 className="text-4xl font-bold mb-4">User Dashboard</h1>
-
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold mb-2">Copy Your Unique Link</h2>{" "}
-        <div className="flex items-center bg-gray-100 pl-2 rounded-2xl">
-          <input
-            type="text"
-            value={profileUrl}
-            disabled
-            className="input input-bordered w-full p-2 mr-2"
-          />
-          <Button
-            className="rounded-2xl hover:bg-gray-700"
-            onClick={copyToClipboard}
-          >
-            Copy
-          </Button>
-        </div>
-      </div>
-
-      <div className="mb-4">
-        <Switch
-          {...register("acceptMessages")}
-          checked={acceptMessages}
-          onCheckedChange={handleSwitchChange}
-          disabled={isSwitchLoading}
-        />
-        <span className="ml-2">
-          Accept Messages: {acceptMessages ? "On" : "Off"}
-        </span>
-      </div>
-      <Separator />
-
-      <Button
-        className="mt-4"
-        variant="outline"
-        onClick={(e) => {
-          e.preventDefault();
-          fetchMessages(true);
-        }}
+    <div className="container mx-auto px-4 py-8 max-w-6xl">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="space-y-8"
       >
-        {isLoading ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
-        ) : (
-          <RefreshCcw className="h-4 w-4" />
-        )}
-      </Button>
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-        {messages.length > 0 ? (
-          messages.map((message, index) => (
-            <MessageCard
-              key={message._id}
-              message={message}
-              onMessageDelete={handleDeleteMessage}
-            />
-          ))
-        ) : (
-          <p>No messages to display.</p>
-        )}
-      </div>
+        {/* Header */}
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground">
+            Manage your anonymous messages and profile settings
+          </p>
+        </div>
+
+        {/* Profile and Stats Grid */}
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Profile Card */}
+          <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle>Your Profile Link</CardTitle>
+              <CardDescription>
+                Share this link to receive anonymous messages
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="profile-link">Your unique link</Label>
+                  <div className="flex items-center space-x-2">
+                    <Input
+                      id="profile-link"
+                      value={profileUrl}
+                      readOnly
+                      className="font-mono text-sm"
+                    />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            onClick={copyToClipboard}
+                            disabled={isCopying || hasCopied}
+                            className="shrink-0"
+                          >
+                            {hasCopied ? (
+                              <Check className="h-4 w-4 text-green-500" />
+                            ) : (
+                              <Copy className="h-4 w-4" />
+                            )}
+                            <span className="sr-only">Copy link</span>
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{hasCopied ? "Copied!" : "Copy to clipboard"}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-2">
+                  <div className="flex items-center space-x-2">
+                    <div
+                      className={`h-3 w-3 rounded-full ${
+                        acceptMessages ? "bg-green-500" : "bg-red-500"
+                      }`}
+                    />
+                    <span className="text-sm text-muted-foreground">
+                      {isSwitchLoading ? (
+                        <div className="flex items-center space-x-2">
+                          <Skeleton className="h-5 w-5 rounded-full" />
+                          <Skeleton className="h-5 w-24" />
+                        </div>
+                      ) : acceptMessages ? (
+                        "Accepting messages"
+                      ) : (
+                        "Not accepting messages"
+                      )}
+                    </span>
+                  </div>
+
+                  {isSwitchLoading ? (
+                    <Skeleton className="h-9 w-20" />
+                  ) : (
+                    <Switch
+                      {...register("acceptMessages")}
+                      checked={acceptMessages}
+                      onCheckedChange={handleSwitchChange}
+                      disabled={isSwitchLoading}
+                      className="data-[state=checked]:bg-green-500"
+                    />
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Stats Card */}
+          <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle>Message Statistics</CardTitle>
+              <CardDescription>
+                Overview of your anonymous messages
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                {stats.map((stat, index) => (
+                  <motion.div
+                    key={stat.label}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="rounded-lg border p-4 "
+                  >
+                    <div className="flex justify-center items-center space-x-2">
+                      <stat.icon className="h-5 w-5 text-muted-foreground" />
+                      <span className="text-sm font-medium ml-2">
+                        {stat.label}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-2xl text-center font-bold">
+                      {isLoading ? "--" : stat.value}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Messages Section */}
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <h2 className="text-xl font-semibold">Your Messages</h2>
+              <p className="text-sm text-muted-foreground">
+                {messages.length === 0
+                  ? "You don't have any messages yet"
+                  : `Showing ${messages.length} message${messages.length !== 1 ? "s" : ""}`}
+              </p>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => fetchMessages(true)}
+              disabled={isLoading}
+              className="shrink-0"
+            >
+              {isLoading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <RefreshCw className="mr-2 h-4 w-4" />
+              )}
+              Refresh
+            </Button>
+          </div>
+
+          <Separator />
+
+          {isLoading ? (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-40 rounded-lg" />
+              ))}
+            </div>
+          ) : messages.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex flex-col items-center justify-center py-12 text-center"
+            >
+              <MailOpen className="h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-medium">No messages yet</h3>
+              <p className="text-muted-foreground mt-2 max-w-md">
+                Share your profile link to start receiving anonymous messages
+              </p>
+              <Button
+                variant="outline"
+                className="mt-4"
+                // asChild
+                onClick={copyToClipboard}
+              >
+                Copy Profile Link
+              </Button>
+            </motion.div>
+          ) : (
+            <motion.div
+              layout
+              className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+            >
+              <AnimatePresence>
+                {messages.map((message, index) => (
+                  <motion.div
+                    key={message._id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ delay: index * 0.05 }}
+                    layout
+                  >
+                    <MessageCard
+                      message={message}
+                      onMessageDelete={handleDeleteMessage}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          )}
+        </div>
+      </motion.div>
     </div>
   );
 };
