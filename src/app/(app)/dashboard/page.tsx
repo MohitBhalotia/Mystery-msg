@@ -111,14 +111,14 @@ const Dashboard = () => {
 
       <div className="mb-4">
         <h2 className="text-lg font-semibold mb-2">Copy Your Unique Link</h2>{' '}
-        <div className="flex items-center">
+        <div className="flex items-center bg-gray-100 pl-2 rounded-2xl">
           <input
             type="text"
             value={profileUrl}
             disabled
             className="input input-bordered w-full p-2 mr-2"
           />
-          <Button onClick={copyToClipboard}>Copy</Button>
+          <Button className="rounded-2xl hover:bg-gray-700" onClick={copyToClipboard}>Copy</Button>
         </div>
       </div>
 
