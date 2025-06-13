@@ -11,8 +11,8 @@ export default function TermsOfService() {
       title: "1. Introduction",
       content: (
         <p className="mb-4">
-          Welcome to MysteryMsg! These Terms of Service ("Terms") govern your access to and use of the MysteryMsg website, 
-          applications, and services (collectively, the "Service"). By accessing or using our Service, you agree to be bound 
+          Welcome to MysteryMsg! These Terms of Service (&quot;Terms&quot;) govern your access to and use of the MysteryMsg website, 
+          applications, and services (collectively, the &quot;Service&quot;). By accessing or using our Service, you agree to be bound 
           by these Terms and our Privacy Policy.
         </p>
       ),
@@ -65,7 +65,7 @@ export default function TermsOfService() {
       title: "5. Disclaimers",
       content: (
         <ul className="list-disc pl-6 space-y-2">
-          <li>The Service is provided "as is" without any warranties, express or implied</li>
+          <li>The Service is provided &quot;as is&quot; without any warranties, express or implied</li>
           <li>We do not guarantee that the Service will be available 100% of the time</li>
           <li>We are not responsible for any content posted by users</li>
           <li>We reserve the right to modify or discontinue the Service at any time</li>
@@ -98,7 +98,7 @@ export default function TermsOfService() {
           <div className="px-8 py-12 sm:px-12">
             <div className="prose prose-lg prose-primary max-w-none">
               <p className="text-lg text-muted-foreground mb-8">
-                Please read these Terms of Service ("Terms") carefully before using the MysteryMsg website and services.
+                Please read these Terms of Service (&quot;Terms&quot;) carefully before using the MysteryMsg website and services.
               </p>
 
               <div className="space-y-16">
@@ -133,7 +133,7 @@ export default function TermsOfService() {
                   <div className="text-muted-foreground">
                     <p className="mb-4">
                       We reserve the right to modify or replace these Terms at any time. If a revision is material, we will provide 
-                      at least 30 days' notice prior to any new terms taking effect.
+                      at least 30 days&apos; notice prior to any new terms taking effect.
                     </p>
                     <p>
                       By continuing to access or use our Service after those revisions become effective, you agree to be bound by the 
