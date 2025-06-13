@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { ReactNode } from "react";
+import Image from "next/image";
 
 interface AuthCardProps {
   title: string;
@@ -31,19 +32,7 @@ export function AuthCard({
           <CardHeader className="space-y-1 pb-6">
             <div className="flex items-center justify-center mb-2">
               <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-5 w-5 text-primary"
-                >
-                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
+                <Image src="/favicon.svg" height={20} width={20} alt="Logo"/>
               </div>
             </div>
             <CardTitle className="text-2xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80">

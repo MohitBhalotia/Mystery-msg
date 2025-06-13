@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { useDebounceCallback } from "usehooks-ts";
 import { toast } from "sonner";
 import { Loader2, User, Eye, EyeOff, Mail, Key } from "lucide-react";
-
+import Link from "next/link";
 import { signUpSchema } from "@/schemas/SignUpSchema";
 import { ApiResponse } from "@/types/ApiResponse";
 import { Button } from "@/components/ui/button";
@@ -50,7 +50,7 @@ const SignUp = () => {
 
   useEffect(() => {
     const checkUsernameUnique = async () => {
-      if (username && username.length >0) {
+      if (username && username.length > 0) {
         setIsCheckingUsername(true);
         try {
           const response = await axios.get<ApiResponse>(
@@ -176,9 +176,11 @@ const SignUp = () => {
                         <span className="h-5 w-5 text-gray-400" />
                       </div>
                     </div>
-                    <p className="text-sm text-yellow-500">
-                      We will send a verification code!
-                    </p>
+                    {field.value.length > 0 && (
+                      <p className="text-sm text-yellow-500">
+                        We will send a verification code!
+                      </p>
+                    )}
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -266,15 +268,24 @@ const SignUp = () => {
                   />
                 </FormControl>
                 <div className="space-y-1 leading-none">
-                  <FormLabel className="text-sm font-normal">
+                  <FormLabel className="text-sm font-normal inline">
                     I agree to the{" "}
-                    <a href="/terms" className="text-primary hover:underline">
+                    <Link
+                      target="_blank"
+                      href="/terms"
+                      className="text-primary hover:underline"
+                    >
                       Terms of Service
-                    </a>{" "}
+                    </Link>{" "}
                     and{" "}
-                    <a href="/privacy" className="text-primary hover:underline">
+                    <Link
+                      target="_blank"
+                      href="/privacy"
+                      className="text-primary hover:underline"
+                    >
                       Privacy Policy
-                    </a>
+                    </Link>
+                    .
                   </FormLabel>
                 </div>
               </FormItem>

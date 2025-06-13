@@ -62,15 +62,15 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="w-full flex flex-col justify-center ">
       {/* Hero Section */}
-      <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
-        <div className="container px-4 md:px-6">
-          <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
-            <div className="flex flex-col justify-center space-y-4">
+      <section className="w-full py-12 md:py-24 lg:py-20 xl:py-36 ">
+        <div className="w-full px-2 md:px-6 max-w-screen-xl mx-auto">
+          <div className="md:flex flex-row">
+            <div className="flex flex-col justify-center space-y-4 mb-10">
               <div className="space-y-2">
                 <motion.h1 
-                  className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl/none bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent"
+                  className="text-4xl pb-4 font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl/none bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
@@ -128,7 +128,7 @@ export default function Home() {
             
             {/* Testimonials Carousel */}
             <motion.div 
-              className="flex items-center justify-center"
+              className="flex items-center justify-center mt-20 md:mt-0"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}

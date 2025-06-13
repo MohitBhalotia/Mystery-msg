@@ -49,7 +49,7 @@ const Navbar = () => {
           : 'border-b border-transparent bg-transparent'
       }`}
     >
-      <nav className="container flex h-16 items-center justify-between px-4 sm:px-6">
+      <nav className="w-full flex h-16 items-center justify-between px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
