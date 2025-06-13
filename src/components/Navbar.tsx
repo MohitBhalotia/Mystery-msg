@@ -37,7 +37,7 @@ const Navbar = () => {
   
 
   // Don't show navbar on auth pages
-  if (pathname.startsWith('/sign-in') || pathname.startsWith('/sign-up')) {
+  if (pathname.startsWith('/sign-in') || pathname.startsWith('/sign-up')||pathname.startsWith('/verify')) {
     return null;
   }
 
@@ -75,7 +75,7 @@ const Navbar = () => {
           
           <AnimatePresence mode="wait">
             {status === "loading" ? (
-              <Skeleton className="h-8 w-8 rounded-full bg-gray-500"/>
+              <Skeleton className="h-8 w-8 rounded-full bg-gray-100"/>
             ) : session ? (
               <motion.div 
                 key="authenticated"

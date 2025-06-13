@@ -42,7 +42,7 @@ export function AuthCard({
               {description}
             </CardDescription>
           </CardHeader>
-          <CardContent className="pb-6">
+          <CardContent className="">
             {children}
           </CardContent>
           <CardFooter className="flex flex-col items-center space-y-4 border-t border-border/40 pt-4">
