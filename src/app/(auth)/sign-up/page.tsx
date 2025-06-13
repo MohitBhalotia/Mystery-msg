@@ -8,7 +8,7 @@ import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useDebounceCallback } from "usehooks-ts";
 import { toast } from "sonner";
-import { Loader2, Check, Eye, EyeOff } from "lucide-react";
+import { Loader2, User, Eye, EyeOff, Mail, Key } from "lucide-react";
 
 import { signUpSchema } from "@/schemas/SignUpSchema";
 import { ApiResponse } from "@/types/ApiResponse";
@@ -50,7 +50,7 @@ const SignUp = () => {
 
   useEffect(() => {
     const checkUsernameUnique = async () => {
-      if (username && username.length >= 3) {
+      if (username && username.length >0) {
         setIsCheckingUsername(true);
         try {
           const response = await axios.get<ApiResponse>(
@@ -159,7 +159,7 @@ const SignUp = () => {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <div >
+                  <div>
                     <div className="relative">
                       <Input
                         {...field}
@@ -171,6 +171,7 @@ const SignUp = () => {
                         disabled={isSubmitting}
                         className="pl-10"
                       />
+                      <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <span className="h-5 w-5 text-gray-400" />
                       </div>
@@ -201,6 +202,7 @@ const SignUp = () => {
                       disabled={isSubmitting}
                       className="pl-10 pr-10"
                     />
+                    <Key className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <span className="h-5 w-5 text-gray-400" />
                     </div>
@@ -240,6 +242,8 @@ const SignUp = () => {
                       disabled={isSubmitting}
                       className="pl-10"
                     />
+                    <Key className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <span className="h-5 w-5 text-gray-400" />
                     </div>

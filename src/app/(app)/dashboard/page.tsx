@@ -268,7 +268,7 @@ const Dashboard = () => {
       >
         {/* Header */}
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Welcome, {username}</h1>
           <p className="text-muted-foreground">
             Manage your anonymous messages and profile settings
           </p>

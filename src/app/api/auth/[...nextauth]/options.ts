@@ -54,7 +54,7 @@ export const authOptions: NextAuthOptions = {
             throw new Error("Invalid credentials. Please try again.");
           }
         } catch (error: any) {
-          return null;
+          throw new Error(error);
         }
       },
     }),
@@ -73,7 +73,7 @@ export const authOptions: NextAuthOptions = {
         token.isVerified = user?.isVerified;
         token.isAcceptingMessages = user?.isAcceptingMessage;
         token.username = user?.username;
-        token.email=token.email
+        token.email = token.email;
       }
       return token;
     },

@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
-import { Loader2, Send, Copy, Check, Sparkles } from "lucide-react";
+import { Loader2, Send,Sparkles } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -33,13 +33,11 @@ export default function UserProfilePage() {
   const [suggestedMsg, setSuggestedMsg] = useState(
     "What's your favorite movie?||Do you have any pets?||What's your dream job?"
   );
-  const [isCopied, setIsCopied] = useState(false);
   const [activeTab, setActiveTab] = useState("send");
   const [isLoading, setIsLoading] = useState(false);
   
   const params = useParams<{ username: string }>();
   const username = params.username;
-  const profileUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/u/${username}`;
 
   const form = useForm<z.infer<typeof messageSchema>>({
     resolver: zodResolver(messageSchema),
@@ -95,12 +93,7 @@ export default function UserProfilePage() {
     }
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(profileUrl);
-    setIsCopied(true);
-    toast.success("Profile link copied to clipboard!");
-    setTimeout(() => setIsCopied(false), 2000);
-  };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 py-4 px-4 sm:px-6 lg:px-8">
