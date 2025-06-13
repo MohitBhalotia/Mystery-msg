@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
-import { Trash2, AlertTriangle, X, Check } from "lucide-react";
+import { Trash2, AlertTriangle, X, Check, MessageSquare } from "lucide-react";
 import { Message } from "@/model/User";
 import { ApiResponse } from "@/types/ApiResponse";
 import { Button } from "./ui/button";
@@ -29,6 +29,7 @@ type MessageCardProps = {
 const MessageCard = ({ message, onMessageDelete }: MessageCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showMessageDialog, setShowMessageDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDeleteConfirm = async () => {
@@ -71,18 +72,19 @@ const MessageCard = ({ message, onMessageDelete }: MessageCardProps) => {
         className="relative"
       >
         <Card
-          className="relative overflow-hidden transition-all duration-200 hover:shadow-md hover:border-primary/30"
+          className="relative h-[150px] flex flex-col justify-between overflow-hidden transition-all duration-200 hover:shadow-md hover:border-primary/30 cursor-pointer group"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
+          onClick={() => setShowMessageDialog(true)}
         >
-          <CardHeader className="pb-2">
-            <div className="relative flex justify-between items-start">
-              <div className="space-y-1 pr-10">
-                {" "}
-                {/* Add padding-right to avoid overlap */}
-                <p className="text-base leading-relaxed break-words">
+          <CardHeader className="pb-2 h-full relative">
+            <div className="flex flex-col h-full">
+              <div className="space-y-1 pr-10 flex-1">
+                {/* Message content with optional line clamp */}
+                <p className="text-base leading-relaxed break-words line-clamp-2">
                   {message.content}
                 </p>
+                {/* Time */}
                 <p className="pl-2 text-sm font-medium text-muted-foreground">
                   <time
                     dateTime={new Date(message.createdAt).toISOString()}
@@ -93,24 +95,27 @@ const MessageCard = ({ message, onMessageDelete }: MessageCardProps) => {
                 </p>
               </div>
 
+              {/* Delete Button */}
               <AnimatePresence>
                 {isHovered && (
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute right-4 top-2"
+                    className="absolute bottom-2 right-2"
                   >
                     <Button
                       variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                      onClick={() => setShowDeleteDialog(true)}
+                      size="sm"
+                      className="h-8 px-6 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10 text-xs font-medium flex items-center gap-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowDeleteDialog(true);
+                      }}
                       disabled={isDeleting}
                     >
-                      <Trash2 className="h-4 w-4" />
-                      <span className="sr-only">Delete message</span>
+                      <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                   </motion.div>
                 )}
@@ -120,6 +125,7 @@ const MessageCard = ({ message, onMessageDelete }: MessageCardProps) => {
         </Card>
       </motion.div>
 
+      {/* Delete Confirmation Dialog */}
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent className="max-w-md">
           <AlertDialogHeader>
@@ -134,7 +140,7 @@ const MessageCard = ({ message, onMessageDelete }: MessageCardProps) => {
               be undone and the message will be permanently removed.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className=" sm:flex sm:space-x-2 sm:space-x-reverse">
+          <AlertDialogFooter className="sm:flex sm:space-x-2 sm:space-x-reverse">
             <AlertDialogCancel
               className="w-full mt-2 sm:mt-0 sm:w-auto"
               disabled={isDeleting}
@@ -148,6 +154,27 @@ const MessageCard = ({ message, onMessageDelete }: MessageCardProps) => {
             >
               {isDeleting ? "Deleting..." : "Delete"}
             </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Message Dialog */}
+      <AlertDialog open={showMessageDialog} onOpenChange={setShowMessageDialog}>
+        <AlertDialogContent className="sm:max-w-[425px] md:max-w-xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <MessageSquare className="w-5 h-5" />
+              Message
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-left pt-2">
+              <p className="whitespace-pre-wrap break-words">{message.content}</p>
+              <p className="mt-4 text-sm text-muted-foreground">
+                Received {timeAgo} • {formattedDate}
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction>Close</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
