@@ -31,6 +31,7 @@ import { REGEXP_ONLY_DIGITS } from "input-otp";
 
 const VerifyAccount = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isResending, setIsResending] = useState(false);
   const [countdown, setCountdown] = useState(60);
   const router = useRouter();

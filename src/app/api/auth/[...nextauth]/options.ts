@@ -26,7 +26,8 @@ export const authOptions: NextAuthOptions = {
           placeholder: "Enter your password",
         },
       },
-      async authorize(credentials, req): Promise<any> {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      async authorize(credentials): Promise<any> {
         // console.log(credentials);
 
         await dbConnect();
@@ -42,6 +43,7 @@ export const authOptions: NextAuthOptions = {
           }
 
           const isPasswordCorrect = await bcrypt.compare(
+            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
             credentials?.password!,
             user.password
           );
@@ -53,6 +55,7 @@ export const authOptions: NextAuthOptions = {
           } else {
             throw new Error("Invalid credentials. Please try again.");
           }
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           throw new Error(error);
         }

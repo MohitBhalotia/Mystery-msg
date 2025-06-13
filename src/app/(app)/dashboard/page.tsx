@@ -164,6 +164,7 @@ const Dashboard = () => {
       setTimeout(() => {
         setHasCopied(false);
       }, 2000);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       toast.error("Failed to copy link");
     } finally {
@@ -189,8 +190,8 @@ const Dashboard = () => {
     } finally {
       setIsSwitchLoading(false);
     }
-  }, [setValue, acceptMessages]);
-
+  }, [setValue]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchMessages = useCallback(
     async (refresh: boolean = false) => {
       if (!username) return;

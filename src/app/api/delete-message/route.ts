@@ -49,6 +49,7 @@ export async function DELETE(request: Request) {
       success: true,
       message: "Message deleted!",
     });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return Response.json(
       {

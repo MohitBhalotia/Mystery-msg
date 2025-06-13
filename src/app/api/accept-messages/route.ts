@@ -44,10 +44,11 @@ export async function POST(request: Request) {
       {
         success: true,
         message: "User Status updated successfully",
-        isAcceptingMessages:updatedUser.isAcceptingMessage
+        isAcceptingMessages: updatedUser.isAcceptingMessage,
       },
       { status: 200 }
     );
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return Response.json(
       {
@@ -58,7 +59,7 @@ export async function POST(request: Request) {
     );
   }
 }
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function GET(request: Request) {
   await dbConnect();
   const session = await getServerSession(authOptions);
@@ -77,7 +78,8 @@ export async function GET(request: Request) {
   const userId = user._id;
 
   try {
-    const foundUser = await UserModel.findById(userId).select("isAcceptingMessage");
+    const foundUser =
+      await UserModel.findById(userId).select("isAcceptingMessage");
 
     if (!foundUser) {
       return Response.json(
@@ -91,10 +93,11 @@ export async function GET(request: Request) {
     return Response.json(
       {
         success: true,
-        isAcceptingMessage: foundUser.isAcceptingMessage
+        isAcceptingMessage: foundUser.isAcceptingMessage,
       },
       { status: 200 }
     );
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return Response.json(
       {

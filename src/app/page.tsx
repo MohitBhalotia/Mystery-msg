@@ -166,7 +166,7 @@ export default function Home() {
                             </div>
                           </CardHeader>
                           <CardContent>
-                            <p className="text-sm text-muted-foreground">"{message.content}"</p>
+                            <p className="text-sm text-muted-foreground">{message.content}</p>
                           </CardContent>
                         </Card>
                       </CarouselItem>
@@ -191,7 +191,7 @@ export default function Home() {
                 Safe, Secure, and Private
               </h2>
               <p className="max-w-[700px] text-muted-foreground md:text-xl">
-                We take your privacy seriously. Here's how we protect you.
+                We take your privacy seriously. Here&apos;s how we protect you.
               </p>
             </div>
           </div>

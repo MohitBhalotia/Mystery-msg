@@ -9,7 +9,7 @@ import { Trash2, AlertTriangle, X, Check } from "lucide-react";
 import { Message } from "@/model/User";
 import { ApiResponse } from "@/types/ApiResponse";
 import { Button } from "./ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
+import { Card, CardHeader } from "./ui/card";
 import {
   AlertDialog,
   AlertDialogAction,

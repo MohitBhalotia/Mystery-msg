@@ -10,7 +10,7 @@ export function PasswordStrength({ password, className }: PasswordStrengthProps)
 
   const getPasswordStrength = (password: string) => {
     let strength = 0;
-    let feedback = [];
+    // let feedback = [];
 
     // Length check
     if (password.length >= 8) strength += 1;

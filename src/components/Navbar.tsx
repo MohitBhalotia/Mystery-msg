@@ -7,7 +7,7 @@ import { useSession, signOut } from "next-auth/react";
 import { User } from "next-auth";
 import { Button } from "./ui/button";
 import { Skeleton } from "./ui/skeleton";
-import { LogOut, MessageCircle, User as UserIcon, Moon, Sun } from "lucide-react";
+import { LogOut, MessageCircle, User as UserIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   DropdownMenu,
@@ -36,9 +36,7 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
-  };
+  
 
   // Don't show navbar on auth pages
   if (pathname.startsWith('/sign-in') || pathname.startsWith('/sign-up')) {
