@@ -18,7 +18,6 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { useTheme } from "next-themes";
 
 const Navbar = () => {
   const { data: session, status } = useSession();
