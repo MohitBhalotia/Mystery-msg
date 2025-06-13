@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/form";
 import { AuthCard } from "@/components/ui/auth-card";
 import { PasswordStrength } from "@/components/ui/password-strength";
+import Image from "next/image";
 
 type SignUpFormValues = z.infer<typeof signUpSchema>;
 
@@ -119,7 +120,7 @@ const SignUp = () => {
         {isGoogleLoading ? (
           <Loader2 className="h-4 w-4 animate-spin" />
         ) : (
-          <img src="/Google.svg" className="h-5 w-5" />
+          <Image alt="Google Logo" src="/Google.svg" className="h-5 w-5" />
         )}
         Continue with Google
       </Button>

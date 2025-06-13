@@ -37,7 +37,7 @@ export default function NotFound() {
             </h2>
             
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              The page you're looking for might have been removed, had its name changed, 
+              The page you&apos;re looking for might have been removed, had its name changed, 
               or is temporarily unavailable.
             </p>
 
