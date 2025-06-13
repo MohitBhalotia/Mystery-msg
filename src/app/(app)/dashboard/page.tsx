@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Separator } from "@/components/ui/separator";
 import {
   Card,
   CardContent,
@@ -24,7 +25,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import {
   Tooltip,
   TooltipContent,
@@ -39,18 +39,23 @@ import { Message } from "@/model/User";
 const DashboardSkeleton = () => {
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
-      <div className="space-y-8">
-        {/* Header Skeleton */}
-        <div className="space-y-4">
-          <Skeleton className="h-9 w-64" />
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="space-y-8"
+      >
+        {/* Header */}
+        <div className="space-y-1">
+          <Skeleton className="h-8 w-64" />
           <Skeleton className="h-5 w-80" />
         </div>
 
+        {/* Profile and Stats Grid */}
         <div className="grid gap-6 md:grid-cols-2">
-          {/* Profile Card Skeleton */}
+          {/* Profile Card */}
           <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
             <CardHeader>
-              <Skeleton className="h-7 w-48 mb-2" />
+              <Skeleton className="h-7 w-48 mb-1" />
               <Skeleton className="h-4 w-64" />
             </CardHeader>
             <CardContent className="space-y-4">
@@ -58,51 +63,66 @@ const DashboardSkeleton = () => {
                 <Skeleton className="h-4 w-32" />
                 <div className="flex items-center space-x-2">
                   <Skeleton className="h-10 flex-1" />
-                  <Skeleton className="h-10 w-10" />
+                  <Skeleton className="h-10 w-10 rounded-md" />
                 </div>
               </div>
+
               <div className="flex items-center justify-between pt-2">
                 <div className="flex items-center space-x-2">
-                  <Skeleton className="h-5 w-5 rounded-full" />
-                  <Skeleton className="h-5 w-24" />
+                  <Skeleton className="h-3 w-3 rounded-full" />
+                  <Skeleton className="h-4 w-36" />
                 </div>
-                <Skeleton className="h-9 w-20" />
+                <Skeleton className="h-8 w-20" />
               </div>
             </CardContent>
           </Card>
 
-          {/* Stats Card Skeleton */}
+          {/* Stats Card */}
           <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
             <CardHeader>
-              <Skeleton className="h-7 w-48 mb-2" />
+              <Skeleton className="h-7 w-48 mb-1" />
               <Skeleton className="h-4 w-64" />
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="space-y-2">
-                    <Skeleton className="h-4 w-20" />
-                    <Skeleton className="h-7 w-16" />
-                  </div>
-                ))}
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-8 w-16" />
+                </div>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Messages Section Skeleton */}
+        {/* Messages Section */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <Skeleton className="h-7 w-48" />
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <Skeleton className="h-7 w-40 mb-1" />
+              <Skeleton className="h-4 w-48" />
+            </div>
             <Skeleton className="h-9 w-24" />
           </div>
+
+          <div className="h-px bg-border w-full my-4" />
+
+          {/* Message Cards */}
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-40 rounded-lg" />
+              <div key={i} className="rounded-lg border p-6">
+                <div className="space-y-3">
+                  <Skeleton className="h-5 w-full" />
+                  <Skeleton className="h-4 w-3/4" />
+                  <div className="flex justify-between items-center pt-2">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-8 w-8 rounded-md" />
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
@@ -155,21 +175,21 @@ const Dashboard = () => {
     setIsSwitchLoading(true);
     try {
       const response = await axios.get<ApiResponse>("/api/accept-messages");
-      console.log(response);
-
-      setValue(
-        "acceptMessages",
-        response?.data?.isAcceptingMessages as boolean
-      );
+      // Ensure we have a boolean value
+      setValue("acceptMessages", response.data.isAcceptingMessage!, {
+        shouldValidate: true,
+      });
     } catch (error) {
-      const axiosError = error as AxiosError<ApiResponse>;
+      console.error("Error fetching message acceptance status:", error);
+      const axiosError = error as AxiosError<{ message?: string }>;
       toast.error(
-        axiosError.response?.data.message || "Error fetching acceptance status"
+        axiosError.response?.data?.message ||
+          "Error fetching message acceptance status"
       );
     } finally {
       setIsSwitchLoading(false);
     }
-  }, [setValue]);
+  }, [setValue, acceptMessages]);
 
   const fetchMessages = useCallback(
     async (refresh: boolean = false) => {
@@ -199,35 +219,36 @@ const Dashboard = () => {
   );
 
   const handleSwitchChange = async () => {
+    const newValue = !acceptMessages;
+    const previousValue = acceptMessages;
+
+    // Optimistic update
+    setValue("acceptMessages", newValue, { shouldValidate: true });
+
     try {
-      //TODO Optimistic update
-
       const response = await axios.post<ApiResponse>("/api/accept-messages", {
-        acceptMessages: !acceptMessages,
+        acceptMessages: newValue,
       });
-      setValue("acceptMessages", !acceptMessages);
-      console.log("change", response);
-
-      // Ensure the response value is a boolean
-
       toast.success(response.data.message);
     } catch (error) {
       // Revert on error
-
-      const axiosError = error as AxiosError<{ message?: string }>;
+      setValue("acceptMessages", previousValue, { shouldValidate: true });
+      const axiosError = error as AxiosError<ApiResponse>;
       toast.error(
         axiosError.response?.data?.message ||
-          "Failed to update message settings"
+          "Failed to update message settings. Please try again."
       );
     }
   };
 
+  // Initialize data when component mounts or session changes
   useEffect(() => {
     if (status === "authenticated") {
-      fetchMessages();
+      // Fetch message acceptance status first
       fetchAcceptMessage();
+      fetchMessages();
     }
-  }, [status, fetchMessages, fetchAcceptMessage]);
+  }, [status, fetchAcceptMessage, fetchMessages]);
 
   if (status === "loading" || !session) {
     return <DashboardSkeleton />;
@@ -303,21 +324,30 @@ const Dashboard = () => {
 
                 <div className="flex items-center justify-between pt-2">
                   <div className="flex items-center space-x-2">
-                    <div
-                      className={`h-3 w-3 rounded-full ${
-                        acceptMessages ? "bg-green-500" : "bg-red-500"
-                      }`}
-                    />
+                    {isSwitchLoading ? (
+                      <Skeleton className="h-3 w-3 rounded-full" />
+                    ) : (
+                      <div
+                        className={`h-3 w-3 rounded-full ${
+                          acceptMessages ? "bg-green-500" : "bg-red-500"
+                        }`}
+                      />
+                    )}
                     <span className="text-sm text-muted-foreground">
                       {isSwitchLoading ? (
-                        <div className="flex items-center space-x-2">
-                          <Skeleton className="h-5 w-5 rounded-full" />
-                          <Skeleton className="h-5 w-24" />
+                        <div className="flex items-center space-x-2 ">
+                          <Skeleton className="h-4 w-36" />
                         </div>
                       ) : acceptMessages ? (
-                        "Accepting messages"
+                        <span className="flex items-center">
+                          {/* <span className="h-2 w-2 rounded-full bg-green-500 mr-2"></span> */}
+                          Accepting messages
+                        </span>
                       ) : (
-                        "Not accepting messages"
+                        <span className="flex items-center">
+                          {/* <span className="h-2 w-2 rounded-full bg-rose-500 mr-2"></span> */}
+                          Not accepting messages
+                        </span>
                       )}
                     </span>
                   </div>
@@ -404,7 +434,16 @@ const Dashboard = () => {
           {isLoading ? (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {[1, 2, 3].map((i) => (
-                <Skeleton key={i} className="h-40 rounded-lg" />
+                <div key={i} className="rounded-lg border p-6">
+                  <div className="space-y-3">
+                    <Skeleton className="h-5 w-full" />
+                    <Skeleton className="h-4 w-3/4" />
+                    <div className="flex justify-between items-center pt-2">
+                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-8 w-8 rounded-md" />
+                    </div>
+                  </div>
+                </div>
               ))}
             </div>
           ) : messages.length === 0 ? (
