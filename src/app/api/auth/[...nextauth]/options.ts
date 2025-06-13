@@ -26,7 +26,7 @@ export const authOptions: NextAuthOptions = {
           placeholder: "Enter your password",
         },
       },
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       async authorize(credentials): Promise<any> {
         // console.log(credentials);
 

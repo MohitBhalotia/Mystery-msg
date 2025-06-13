@@ -22,7 +22,6 @@ import { useTheme } from "next-themes";
 
 const Navbar = () => {
   const { data: session, status } = useSession();
-  const { theme, setTheme } = useTheme();
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const user = session?.user as User;

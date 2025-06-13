@@ -191,7 +191,6 @@ const Dashboard = () => {
       setIsSwitchLoading(false);
     }
   }, [setValue]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchMessages = useCallback(
     async (refresh: boolean = false) => {
       if (!username) return;
