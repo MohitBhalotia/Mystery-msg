@@ -114,7 +114,7 @@ const SignUp = () => {
           setIsGoogleLoading(true);
           signIn("google", { callbackUrl: "/dashboard" });
         }}
-        className="w-full flex items-center justify-center gap-2"
+        className="w-full cursor-pointer flex items-center justify-center gap-2"
       >
         {isGoogleLoading ? (
           <Loader2 className="h-4 w-4 animate-spin" />
@@ -246,7 +246,7 @@ const SignUp = () => {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      className="absolute cursor-pointer right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                       tabIndex={-1}
                     >
                       {showPassword ? (
@@ -302,6 +302,7 @@ const SignUp = () => {
                   <Checkbox
                     checked={field.value}
                     onCheckedChange={field.onChange}
+                    className="cursor-pointer"
                   />
                 </FormControl>
                 <div className="space-y-1 leading-none">
@@ -310,7 +311,7 @@ const SignUp = () => {
                     <Link
                       target="_blank"
                       href="/terms"
-                      className="text-primary hover:underline"
+                      className="text-primary underline"
                     >
                       Terms of Service
                     </Link>{" "}
@@ -318,7 +319,7 @@ const SignUp = () => {
                     <Link
                       target="_blank"
                       href="/privacy"
-                      className="text-primary hover:underline"
+                      className="text-primary underline"
                     >
                       Privacy Policy
                     </Link>
@@ -329,7 +330,7 @@ const SignUp = () => {
             )}
           />
 
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
+          <Button type="submit" className="w-full cursor-pointer" disabled={isSubmitting}>
             {isSubmitting ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (

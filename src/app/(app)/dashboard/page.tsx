@@ -304,7 +304,7 @@ const Dashboard = () => {
                             size="icon"
                             onClick={copyToClipboard}
                             disabled={isCopying || hasCopied}
-                            className="shrink-0"
+                            className="shrink-0 cursor-pointer"
                           >
                             {hasCopied ? (
                               <Check className="h-4 w-4 text-green-500" />
@@ -360,7 +360,7 @@ const Dashboard = () => {
                       checked={acceptMessages}
                       onCheckedChange={handleSwitchChange}
                       disabled={isSwitchLoading}
-                      className="data-[state=checked]:bg-green-500"
+                      className="data-[state=checked]:bg-green-500 cursor-pointer"
                     />
                   )}
                 </div>
@@ -418,12 +418,12 @@ const Dashboard = () => {
               size="sm"
               onClick={() => fetchMessages(true)}
               disabled={isLoading}
-              className="shrink-0"
+              className="shrink-0 cursor-pointer"
             >
               {isLoading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
-                <RefreshCw className="mr-2 h-4 w-4" />
+                <RefreshCw className="mr-2 h-4 w-4 " />
               )}
               Refresh
             </Button>
@@ -459,7 +459,7 @@ const Dashboard = () => {
               </p>
               <Button
                 variant="outline"
-                className="mt-4"
+                className="mt-4 cursor-pointer"
                 // asChild
                 onClick={copyToClipboard}
               >

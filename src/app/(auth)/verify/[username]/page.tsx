@@ -32,7 +32,7 @@ import { REGEXP_ONLY_DIGITS } from "input-otp";
 const VerifyAccount = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [isResending, setIsResending] = useState(false);
+  // const [isResending, setIsResending] = useState(false);
   const [countdown, setCountdown] = useState(60);
   const router = useRouter();
   const params = useParams<{ username: string }>();
@@ -126,7 +126,7 @@ const VerifyAccount = () => {
                     >
                       <InputOTPGroup>
                         {[...Array(6)].map((_, index) => (
-                          <InputOTPSlot key={index} index={index} className="h-12 w-12"/>
+                          <InputOTPSlot key={index} index={index} className="h-10 w-10 sm:h-12 sm:w-12"/>
                         ))}
                       </InputOTPGroup>
                     </InputOTP>
@@ -162,7 +162,7 @@ const VerifyAccount = () => {
 
           <Button
             type="submit"
-            className="w-full mt-10"
+            className="w-full mt-10 cursor-pointer"
             size="lg"
             disabled={isSubmitting}
           >

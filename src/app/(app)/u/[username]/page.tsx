@@ -111,13 +111,13 @@ export default function UserProfilePage() {
             <TabsList className="bg-transparent p-0 h-auto w-full justify-start space-x-6">
               <TabsTrigger 
                 value="send" 
-                className="relative px-1 py-4 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none data-[state=active]:text-primary data-[state=active]:shadow-[0_-2px_0_0_#3b82f6_inset] rounded-none"
+                className="relative cursor-pointer px-1 py-4 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none data-[state=active]:text-primary data-[state=active]:shadow-[0_-2px_0_0_#3b82f6_inset] rounded-none"
               >
                 Send Message
               </TabsTrigger>
               <TabsTrigger 
                 value="suggestions" 
-                className="relative px-1 py-4 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none data-[state=active]:text-primary data-[state=active]:shadow-[0_-2px_0_0_#3b82f6_inset] rounded-none"
+                className="relative cursor-pointer px-1 py-4 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none data-[state=active]:text-primary data-[state=active]:shadow-[0_-2px_0_0_#3b82f6_inset] rounded-none"
               >
                 Message Ideas
               </TabsTrigger>
@@ -156,7 +156,7 @@ export default function UserProfilePage() {
                       <Button 
                         type="submit" 
                         disabled={isLoading || !messageContent}
-                        className="w-full sm:w-auto px-6 py-3 text-base font-medium rounded-lg shadow-sm transition-colors"
+                        className="w-full cursor-pointer sm:w-auto px-6 py-3 text-base font-medium rounded-lg shadow-sm transition-colors"
                         size="lg"
                       >
                         {isLoading ? (
@@ -193,7 +193,7 @@ export default function UserProfilePage() {
                     size="sm"
                     onClick={fetchSuggestedMessages}
                     disabled={isSuggestLoading}
-                    className="shrink-0"
+                    className="shrink-0 cursor-pointer"
                   >
                     {isSuggestLoading ? (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -215,7 +215,7 @@ export default function UserProfilePage() {
                       <Button
                         key={index}
                         variant="outline"
-                        className="h-auto min-h-[64px] py-3 px-4 text-left whitespace-normal justify-start hover:bg-primary/5 hover:border-primary/30 transition-colors"
+                        className="h-auto cursor-pointer min-h-[64px] py-3 px-4 text-left whitespace-normal justify-start hover:bg-primary/5 hover:border-primary/30 transition-colors"
                         onClick={() => handleMessageClick(message)}
                       >
                         <span className="text-sm sm:text-base">{message}</span>
@@ -237,12 +237,12 @@ export default function UserProfilePage() {
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link href="/sign-up" className="w-full sm:w-auto">
-                <Button size="lg" className="w-full">
+                <Button size="lg" className="w-full cursor-pointer">
                   Get Started
                 </Button>
               </Link>
               <Link href="/about" className="w-full sm:w-auto">
-                <Button variant="outline" size="lg" className="w-full">
+                <Button variant="outline" size="lg" className="w-full cursor-pointer">
                   Learn More
                 </Button>
               </Link>

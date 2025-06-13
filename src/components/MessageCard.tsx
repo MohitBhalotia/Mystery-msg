@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
-import { Trash2, AlertTriangle, X, Check, MessageSquare } from "lucide-react";
+import { Trash2, AlertTriangle, X, Check, MessageSquare, Info } from "lucide-react";
 import { Message } from "@/model/User";
 import { ApiResponse } from "@/types/ApiResponse";
 import { Button } from "./ui/button";
@@ -27,7 +27,6 @@ type MessageCardProps = {
 };
 
 const MessageCard = ({ message, onMessageDelete }: MessageCardProps) => {
-  const [isHovered, setIsHovered] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showMessageDialog, setShowMessageDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -72,10 +71,7 @@ const MessageCard = ({ message, onMessageDelete }: MessageCardProps) => {
         className="relative"
       >
         <Card
-          className="relative h-[150px] flex flex-col justify-between overflow-hidden transition-all duration-200 hover:shadow-md hover:border-primary/30 cursor-pointer group"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          onClick={() => setShowMessageDialog(true)}
+          className="relative h-[150px] flex flex-col justify-between overflow-hidden transition-all duration-200 hover:shadow-md hover:border-primary/30 group"
         >
           <CardHeader className="pb-2 h-full relative">
             <div className="flex flex-col h-full">
@@ -94,10 +90,33 @@ const MessageCard = ({ message, onMessageDelete }: MessageCardProps) => {
                   </time>
                 </p>
               </div>
+              <div className="w-full flex flex-col">
 
+              <AnimatePresence>
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute bottom-2 right-12"
+                  >
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 cursor-pointer px-6 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/10 text-xs font-medium flex items-center gap-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowMessageDialog(true);
+                      }}
+                      disabled={isDeleting}
+                    >
+                      <Info className="h-3.5 w-3.5" />
+                    </Button>
+                  </motion.div>
+              </AnimatePresence>
+              
               {/* Delete Button */}
               <AnimatePresence>
-                {isHovered && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -108,7 +127,7 @@ const MessageCard = ({ message, onMessageDelete }: MessageCardProps) => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-8 px-6 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10 text-xs font-medium flex items-center gap-1"
+                      className="h-8 px-6 rounded-full cursor-pointer text-muted-foreground hover:text-destructive hover:bg-destructive/10 text-xs font-medium flex items-center gap-1"
                       onClick={(e) => {
                         e.stopPropagation();
                         setShowDeleteDialog(true);
@@ -118,8 +137,8 @@ const MessageCard = ({ message, onMessageDelete }: MessageCardProps) => {
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                   </motion.div>
-                )}
               </AnimatePresence>
+              </div>
             </div>
           </CardHeader>
         </Card>

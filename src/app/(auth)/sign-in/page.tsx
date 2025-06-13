@@ -13,9 +13,16 @@ import { signInSchema } from "@/schemas/SignInSchema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { AuthCard } from "@/components/ui/auth-card";
-
+import Link from "next/link";
 const SignIn = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -69,9 +76,9 @@ const SignIn = () => {
         disabled={isSubmitting || isGoogleLoading}
         onClick={() => {
           setIsGoogleLoading(true);
-          signIn('google', { callbackUrl: '/dashboard' });
+          signIn("google", { callbackUrl: "/dashboard" });
         }}
-        className="w-full flex items-center justify-center gap-2"
+        className="w-full flex items-center justify-center gap-2 cursor-pointer"
       >
         {isGoogleLoading ? (
           <Loader2 className="h-4 w-4 animate-spin" />
@@ -125,17 +132,17 @@ const SignIn = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="text-sm font-medium text-primary hover:underline"
+                    className="text-sm font-medium text-primary hover:underline cursor-pointer"
                     tabIndex={-1}
                   >
-                    {showPassword ? 'Hide' : 'Show'}
+                    {showPassword ? "Hide" : "Show"}
                   </button>
                 </div>
                 <FormControl>
                   <div className="relative">
                     <Input
                       {...field}
-                      type={showPassword ? 'text' : 'password'}
+                      type={showPassword ? "text" : "password"}
                       placeholder="••••••••"
                       disabled={isSubmitting}
                       className="h-11 pr-10"
@@ -143,7 +150,7 @@ const SignIn = () => {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      className="absolute cursor-pointer right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                       tabIndex={-1}
                     >
                       {showPassword ? (
@@ -160,29 +167,29 @@ const SignIn = () => {
           />
 
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 ">
               <Checkbox
                 id="remember"
                 checked={isRememberMe}
                 onCheckedChange={(checked) => setIsRememberMe(!!checked)}
-                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                className="h-4 cursor-pointer w-4 rounded border-gray-300 text-primary focus:ring-primary"
               />
               <label
                 htmlFor="remember"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
                 Remember me
               </label>
             </div>
-            <button
-              type="button"
+            <Link
+              href="/forgot-password"
               className="text-sm font-medium text-primary hover:underline"
             >
               Forgot password?
-            </button>
+            </Link>
           </div>
 
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
+          <Button type="submit" className="w-full cursor-pointer" disabled={isSubmitting}>
             {isSubmitting ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (

@@ -49,7 +49,7 @@ export default function VerificationEmail({
           <Row>
             <Column style={logoContainer}>
               <Img
-                src={`${appUrl}/favicon.png`}
+                src={`${appUrl}/favicon.jpg`}
                 width="48"
                 height="48"
                 alt={appName}

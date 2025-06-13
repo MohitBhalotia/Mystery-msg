@@ -104,7 +104,7 @@ export default function Home() {
                       required
                     />
                   </div>
-                  <Button type="submit" size="lg" className="h-12 px-6 mr-2">
+                  <Button type="submit" size="lg" className="h-12 px-6 mr-2 cursor-pointer">
                     <span>Continue</span>
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
