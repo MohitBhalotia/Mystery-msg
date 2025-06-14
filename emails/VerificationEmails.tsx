@@ -17,7 +17,7 @@ interface VerificationEmailProps {
   otp: string;
 }
 
-export default function VerificationEmail({
+export function VerificationEmail({
   username,
   otp,
 }: VerificationEmailProps) {
@@ -28,7 +28,7 @@ export default function VerificationEmail({
   return (
     <Html lang="en" dir="ltr">
       <Head>
-        <title>Verify Your Email - {appName}</title>
+        <title>{`Verify Your Email - ${appName}`}</title>
         <Font
           fontFamily="Inter"
           fallbackFontFamily={["Arial", "sans-serif"]}
@@ -133,6 +133,10 @@ export default function VerificationEmail({
   );
 }
 
+export async function getVerificationEmailHtml(username: string, otp: string) {
+  const { render } = await import('@react-email/render');
+  return render(<VerificationEmail username={username} otp={otp} />, { pretty: true });
+}
 // Styles
 const container = {
   maxWidth: "600px",
