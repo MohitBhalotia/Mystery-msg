@@ -1,4 +1,4 @@
-"use server"
+"use server";
 
 import { ApiResponse } from "@/types/ApiResponse";
 import { getVerificationEmailHtml } from "../../emails/VerificationEmails";
@@ -10,28 +10,28 @@ export async function sendVerificationEmail(
   verificationCode: string
 ): Promise<ApiResponse> {
   try {
-    const emailHtml = await getVerificationEmailHtml(username, verificationCode);
+    const emailHtml = await getVerificationEmailHtml(
+      username,
+      verificationCode
+    );
 
-    const  mailOptions={
+    const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: 'Verify Your Email - Mystery Msg',
+      subject: "Verify Your Email - Mystery Msg",
       html: emailHtml,
     };
-
-    const response=await transporter?.sendMail(mailOptions);
-    // console.log("EMail",response);
-    
+    await transporter?.sendMail(mailOptions);
 
     return {
       success: true,
-      message: 'Verification email sent successfully.',
+      message: "Verification email sent successfully.",
     };
   } catch (error) {
-    console.error('Error sending verification email:', error);
+    console.error("Error sending verification email:", error);
     return {
       success: false,
-      message: 'Failed to send verification email. Please try again later.',
+      message: "Failed to send verification email. Please try again later.",
     };
   }
 }
